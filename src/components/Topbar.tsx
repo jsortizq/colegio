@@ -1,6 +1,7 @@
 import React from 'react';
 import { Menu } from 'lucide-react';
 import { useStore } from '../store/useStore';
+import { useI18n } from '../i18n';
 
 interface TopbarProps {
   onMenuToggle: () => void;
@@ -8,6 +9,7 @@ interface TopbarProps {
 
 export default function Topbar({ onMenuToggle }: TopbarProps) {
   const { currentUser } = useStore();
+  const { t } = useI18n();
 
   const initials = currentUser
     ? currentUser.name
@@ -23,7 +25,7 @@ export default function Topbar({ onMenuToggle }: TopbarProps) {
       <button
         onClick={onMenuToggle}
         className="p-2 -ml-2 rounded-lg hover:bg-gray-100 transition-colors"
-        aria-label="Abrir menú"
+        aria-label={t('topbar.openMenu')}
       >
         <Menu className="w-5 h-5 text-gray-700" />
       </button>

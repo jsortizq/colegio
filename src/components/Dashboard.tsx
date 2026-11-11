@@ -4,60 +4,62 @@ import {
   FileText, Calendar, Users, ClipboardList, BarChart3, Bell
 } from 'lucide-react';
 import { useStore } from '../store/useStore';
+import { useI18n } from '../i18n';
 
 export default function Dashboard() {
   const { students, teachers, certificates, grades, currentUser } = useStore();
+  const { t } = useI18n();
 
   const stats = useMemo(() => [
     {
-      title: 'Total Estudiantes',
+      title: t('dashboard.totalStudents'),
       value: students.length,
       icon: GraduationCap,
       accent: 'from-blue-400 to-blue-600',
       iconBg: 'bg-blue-500',
-      change: `${students.filter(s => s.status === 'active').length} activos`,
+      change: `${students.filter(s => s.status === 'active').length} ${t('dashboard.active')}`,
     },
     {
-      title: 'Docentes Activos',
-      value: teachers.filter(t => t.status === 'active').length,
+      title: t('dashboard.activeTeachers'),
+      value: teachers.filter(tc => tc.status === 'active').length,
       icon: UserCheck,
       accent: 'from-leaf-400 to-leaf-600',
       iconBg: 'bg-leaf-500',
-      change: `${teachers.length} en total`,
+      change: `${teachers.length} ${t('dashboard.total')}`,
     },
     {
-      title: 'Certificados Emitidos',
+      title: t('dashboard.certificatesIssued'),
       value: certificates.filter(c => c.status === 'issued' || c.status === 'delivered').length,
       icon: Award,
       accent: 'from-sun-300 to-sun-500',
       iconBg: 'bg-sun-500',
-      change: `${certificates.filter(c => c.status === 'pending').length} pendientes`,
+      change: `${certificates.filter(c => c.status === 'pending').length} ${t('dashboard.pending')}`,
     },
     {
-      title: 'Grados Activos',
+      title: t('dashboard.activeGrades'),
       value: grades.length,
       icon: BookOpen,
       accent: 'from-purple-400 to-purple-600',
       iconBg: 'bg-purple-500',
-      change: `${grades.reduce((sum, g) => sum + g.capacity, 0)} cupos totales`,
+      change: `${grades.reduce((sum, g) => sum + g.capacity, 0)} ${t('dashboard.totalSlots')}`,
     },
-  ], [students, teachers, certificates, grades]);
+  ], [students, teachers, certificates, grades, t]);
 
   const recentActivities = [
-    { action: 'Nuevo estudiante registrado', time: 'Hace 2 horas', icon: GraduationCap, color: 'text-blue-600 bg-blue-50' },
-    { action: 'Certificado de estudios emitido', time: 'Hace 4 horas', icon: Award, color: 'text-sun-500 bg-sun-100' },
-    { action: 'Docente asignado a grado 10-A', time: 'Hace 1 día', icon: UserCheck, color: 'text-leaf-500 bg-leaf-100' },
-    { action: 'Reporte trimestral generado', time: 'Hace 2 días', icon: BarChart3, color: 'text-purple-600 bg-purple-50' },
-    { action: 'Documento de matrícula subido', time: 'Hace 3 días', icon: FileText, color: 'text-blue-600 bg-blue-50' },
+    { action: t('dashboard.activity.newStudent'), time: t('dashboard.activity.hoursAgo', { n: 2 }), icon: GraduationCap, color: 'text-blue-600 bg-blue-50' },
+    { action: t('dashboard.activity.certIssued'), time: t('dashboard.activity.hoursAgo', { n: 4 }), icon: Award, color: 'text-sun-500 bg-sun-100' },
+    { action: t('dashboard.activity.teacherAssigned'), time: t('dashboard.activity.daysAgo', { n: 1 }), icon: UserCheck, color: 'text-leaf-500 bg-leaf-100' },
+    { action: t('dashboard.activity.reportGenerated'), time: t('dashboard.activity.daysAgo', { n: 2 }), icon: BarChart3, color: 'text-purple-600 bg-purple-50' },
+    { action: t('dashboard.activity.docUploaded'), time: t('dashboard.activity.daysAgo', { n: 3 }), icon: FileText, color: 'text-blue-600 bg-blue-50' },
   ];
 
   const quickActions = [
-    { title: 'Archivos', subtitle: 'Actas', icon: FileText, color: 'bg-blue-50 text-blue-600 ring-blue-200' },
-    { title: 'Gestión', subtitle: 'Solicitudes', icon: Calendar, color: 'bg-leaf-100 text-leaf-600 ring-leaf-200' },
-    { title: 'Recursos', subtitle: 'Técnicos', icon: Users, color: 'bg-sun-100 text-sun-500 ring-sun-300' },
-    { title: 'Archivos', subtitle: 'Órdenes', icon: ClipboardList, color: 'bg-purple-50 text-purple-600 ring-purple-200' },
-    { title: 'Gestión', subtitle: 'Informes', icon: TrendingUp, color: 'bg-red-50 text-red-500 ring-red-200' },
-    { title: 'Gestión', subtitle: 'Tipo Órdenes', icon: Award, color: 'bg-indigo-50 text-indigo-600 ring-indigo-200' },
+    { title: t('dashboard.qa.files'), subtitle: t('dashboard.qa.records'), icon: FileText, color: 'bg-blue-50 text-blue-600 ring-blue-200' },
+    { title: t('dashboard.qa.management'), subtitle: t('dashboard.qa.requests'), icon: Calendar, color: 'bg-leaf-100 text-leaf-600 ring-leaf-200' },
+    { title: t('dashboard.qa.resources'), subtitle: t('dashboard.qa.technical'), icon: Users, color: 'bg-sun-100 text-sun-500 ring-sun-300' },
+    { title: t('dashboard.qa.files'), subtitle: t('dashboard.qa.orders'), icon: ClipboardList, color: 'bg-purple-50 text-purple-600 ring-purple-200' },
+    { title: t('dashboard.qa.management'), subtitle: t('dashboard.qa.reports'), icon: TrendingUp, color: 'bg-red-50 text-red-500 ring-red-200' },
+    { title: t('dashboard.qa.management'), subtitle: t('dashboard.qa.orderTypes'), icon: Award, color: 'bg-indigo-50 text-indigo-600 ring-indigo-200' },
   ];
 
   const enrollmentByGrade = useMemo(() =>
@@ -79,9 +81,9 @@ export default function Dashboard() {
           </div>
           <div>
             <h1 className="text-2xl font-bold text-ink">
-              ¡Bienvenido, {currentUser?.name ?? 'Administrador'}!
+              {t('dashboard.welcome', { name: currentUser?.name ?? 'Admin' })}
             </h1>
-            <p className="text-gray-500">Gestión académica integral — EduGestión</p>
+            <p className="text-gray-500">{t('dashboard.tagline')}</p>
           </div>
         </div>
       </div>
@@ -117,7 +119,7 @@ export default function Dashboard() {
         <div className="lg:col-span-2 space-y-6">
           {/* Quick Actions */}
           <div className="bg-white rounded-xl shadow-card p-6 animate-fade-up" style={{ animationDelay: '320ms' }}>
-            <h2 className="text-lg font-semibold text-ink mb-5">Gestión Académica</h2>
+            <h2 className="text-lg font-semibold text-ink mb-5">{t('dashboard.academicMgmt')}</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {quickActions.map((item, i) => {
                 const Icon = item.icon;
@@ -140,7 +142,7 @@ export default function Dashboard() {
           {/* Recent Activity */}
           <div className="bg-white rounded-xl shadow-card p-6 animate-fade-up" style={{ animationDelay: '400ms' }}>
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg font-semibold text-ink">Actividad Reciente</h2>
+              <h2 className="text-lg font-semibold text-ink">{t('dashboard.recentActivity')}</h2>
               <Bell className="w-5 h-5 text-gray-400" />
             </div>
             <ul className="space-y-3">
@@ -165,7 +167,7 @@ export default function Dashboard() {
         {/* Right: Enrollment Chart */}
         <div className="space-y-6">
           <div className="bg-white rounded-xl shadow-card p-6 animate-fade-up" style={{ animationDelay: '480ms' }}>
-            <h3 className="text-lg font-semibold text-ink mb-6">Matrícula por Grado</h3>
+            <h3 className="text-lg font-semibold text-ink mb-6">{t('dashboard.enrollmentByGrade')}</h3>
             {enrollmentByGrade.length > 0 ? (
               <div className="space-y-4">
                 {enrollmentByGrade.map((g, i) => (
@@ -184,17 +186,17 @@ export default function Dashboard() {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-gray-400 text-center py-8">Sin datos de grados</p>
+              <p className="text-sm text-gray-400 text-center py-8">{t('dashboard.noGradeData')}</p>
             )}
           </div>
 
           <div className="bg-white rounded-xl shadow-card p-6 animate-fade-up" style={{ animationDelay: '560ms' }}>
-            <h3 className="text-lg font-semibold text-ink mb-4">Certificados</h3>
+            <h3 className="text-lg font-semibold text-ink mb-4">{t('dashboard.certificates')}</h3>
             <div className="grid grid-cols-3 gap-3 text-center">
               {[
-                { label: 'Pendientes', count: certificates.filter(c => c.status === 'pending').length, color: 'text-sun-500' },
-                { label: 'Emitidos', count: certificates.filter(c => c.status === 'issued').length, color: 'text-leaf-500' },
-                { label: 'Entregados', count: certificates.filter(c => c.status === 'delivered').length, color: 'text-blue-600' },
+                { label: t('dashboard.pendingCerts'), count: certificates.filter(c => c.status === 'pending').length, color: 'text-sun-500' },
+                { label: t('dashboard.issuedCerts'), count: certificates.filter(c => c.status === 'issued').length, color: 'text-leaf-500' },
+                { label: t('dashboard.deliveredCerts'), count: certificates.filter(c => c.status === 'delivered').length, color: 'text-blue-600' },
               ].map((s, i) => (
                 <div key={i} className="bg-gray-50 rounded-lg p-3">
                   <div className={`text-2xl font-bold ${s.color}`}>{s.count}</div>

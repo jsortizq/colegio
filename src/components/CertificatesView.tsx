@@ -1,21 +1,40 @@
 import { useState, useMemo } from 'react';
 import { Award, Filter, CheckCircle, Clock, Truck, Search } from 'lucide-react';
 import { useStore } from '../store/useStore';
+import { useI18n } from '../i18n';
 
-const typeLabel: Record<string, string> = { study: 'Estudios', conduct: 'Conducta', grades: 'Calificaciones', attendance: 'Asistencia' };
 const statusBadge: Record<string, string> = {
   pending: 'bg-sun-100 text-sun-500',
   issued: 'bg-leaf-100 text-leaf-600',
   delivered: 'bg-blue-50 text-blue-700',
 };
-const statusLabel: Record<string, string> = { pending: 'Pendiente', issued: 'Emitido', delivered: 'Entregado' };
 const StatusIcon: Record<string, typeof Clock> = { pending: Clock, issued: CheckCircle, delivered: Truck };
 
 export default function CertificatesView() {
   const { certificates, students } = useStore();
+  const { t } = useI18n();
   const [statusFilter, setStatusFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [search, setSearch] = useState('');
+
+  const typeLabel = (key: string) => {
+    const map: Record<string, string> = {
+      study: t('certificates.study'),
+      conduct: t('certificates.conduct'),
+      grades: t('certificates.grades'),
+      attendance: t('certificates.attendance'),
+    };
+    return map[key] ?? key;
+  };
+
+  const statusLabel = (key: string) => {
+    const map: Record<string, string> = {
+      pending: t('certificates.pending'),
+      issued: t('certificates.issued'),
+      delivered: t('certificates.delivered'),
+    };
+    return map[key] ?? key;
+  };
 
   const studentMap = useMemo(() => new Map(students.map(s => [s.id, s.name])), [students]);
 
@@ -34,14 +53,14 @@ export default function CertificatesView() {
   return (
     <div className="p-4 sm:p-6 lg:p-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-ink">Certificados</h1>
-        <p className="text-gray-500 text-sm mt-1">Gestión y seguimiento de certificados</p>
+        <h1 className="text-2xl font-bold text-ink">{t('certificates.pageTitle')}</h1>
+        <p className="text-gray-500 text-sm mt-1">{t('certificates.pageSubtitle')}</p>
       </div>
 
       <div className="bg-white rounded-xl shadow-card p-4 mb-6 flex flex-col sm:flex-row sm:items-center gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input type="text" placeholder="Buscar por nombre de estudiante…" value={search} onChange={e => setSearch(e.target.value)}
+          <input type="text" placeholder={t('certificates.searchPlaceholder')} value={search} onChange={e => setSearch(e.target.value)}
             className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent" />
         </div>
         <div className="flex gap-2">
@@ -49,16 +68,19 @@ export default function CertificatesView() {
             <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
               className="pl-9 pr-8 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 bg-white appearance-none">
-              <option value="">Todos los estados</option>
-              <option value="pending">Pendiente</option>
-              <option value="issued">Emitido</option>
-              <option value="delivered">Entregado</option>
+              <option value="">{t('certificates.allStatuses')}</option>
+              <option value="pending">{t('certificates.pending')}</option>
+              <option value="issued">{t('certificates.issued')}</option>
+              <option value="delivered">{t('certificates.delivered')}</option>
             </select>
           </div>
           <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)}
             className="px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-400 bg-white">
-            <option value="">Todos los tipos</option>
-            {Object.entries(typeLabel).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+            <option value="">{t('certificates.allTypes')}</option>
+            <option value="study">{typeLabel('study')}</option>
+            <option value="conduct">{typeLabel('conduct')}</option>
+            <option value="grades">{typeLabel('grades')}</option>
+            <option value="attendance">{typeLabel('attendance')}</option>
           </select>
         </div>
       </div>
@@ -73,7 +95,7 @@ export default function CertificatesView() {
               <div className={`p-2.5 rounded-lg ${statusBadge[status]}`}><Icon className="w-5 h-5" /></div>
               <div>
                 <p className="text-2xl font-bold text-ink">{count}</p>
-                <p className="text-xs text-gray-400">{statusLabel[status]}</p>
+                <p className="text-xs text-gray-400">{statusLabel(status)}</p>
               </div>
             </div>
           );
@@ -85,11 +107,11 @@ export default function CertificatesView() {
           <table className="w-full text-sm">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
-                <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider">Estudiante</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider">Tipo</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider hidden sm:table-cell">Año</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider hidden md:table-cell">Fecha Emisión</th>
-                <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider">Estado</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider">{t('certificates.colStudent')}</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider">{t('certificates.colType')}</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider hidden sm:table-cell">{t('certificates.colYear')}</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider hidden md:table-cell">{t('certificates.colIssueDate')}</th>
+                <th className="px-4 py-3 text-left font-medium text-gray-500 uppercase text-xs tracking-wider">{t('certificates.colStatus')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -105,18 +127,18 @@ export default function CertificatesView() {
                         <span className="font-medium text-ink">{studentMap.get(c.studentId) ?? `ID ${c.studentId}`}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-gray-600">{typeLabel[c.type] ?? c.type}</td>
+                    <td className="px-4 py-3 text-gray-600">{typeLabel(c.type)}</td>
                     <td className="px-4 py-3 text-gray-500 hidden sm:table-cell">{c.year}</td>
                     <td className="px-4 py-3 text-gray-400 hidden md:table-cell">{c.issuedDate}</td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full ${statusBadge[c.status]}`}>
-                        <Icon className="w-3 h-3" />{statusLabel[c.status]}
+                        <Icon className="w-3 h-3" />{statusLabel(c.status)}
                       </span>
                     </td>
                   </tr>
                 );
               })}
-              {filtered.length === 0 && <tr><td colSpan={5} className="py-12 text-center text-gray-400">Sin certificados</td></tr>}
+              {filtered.length === 0 && <tr><td colSpan={5} className="py-12 text-center text-gray-400">{t('certificates.noResults')}</td></tr>}
             </tbody>
           </table>
         </div>

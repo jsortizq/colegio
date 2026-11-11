@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, AlertCircle, Globe } from 'lucide-react';
 import { useStore } from '../store/useStore';
+import { useI18n } from '../i18n';
 
 export default function LoginView() {
   const { login } = useStore();
+  const { t, lang, setLang } = useI18n();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -20,13 +22,22 @@ export default function LoginView() {
 
     const ok = login(email, password);
     if (!ok) {
-      setError('Credenciales incorrectas. Verifica tu correo y contraseña.');
+      setError(t('login.error'));
     }
     setIsLoading(false);
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex relative">
+      {/* Language toggle — floating */}
+      <button
+        onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
+        className="absolute top-4 right-4 z-10 flex items-center gap-1.5 bg-white/90 backdrop-blur text-ink text-xs font-medium px-3 py-1.5 rounded-full shadow-sm border border-gray-200/60 hover:bg-white transition-colors"
+      >
+        <Globe className="w-3.5 h-3.5" />
+        {lang === 'es' ? '🇺🇸 EN' : '🇪🇸 ES'}
+      </button>
+
       {/* Left panel — illustration (hidden on mobile) */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-ink-DEFAULT via-blue-900 to-blue-700 relative overflow-hidden items-center justify-center p-12">
         {/* Abstract decorative SVG */}
@@ -67,12 +78,12 @@ export default function LoginView() {
             <path d="M190 135 L190 148 Q200 155 210 148 L210 135" fill="none" stroke="#fff" strokeWidth="1.5" strokeOpacity="0.5" />
           </svg>
 
-          <h1 className="text-3xl font-display font-black text-white mb-3">EduGestión</h1>
+          <h1 className="text-3xl font-display font-black text-white mb-3">{t('login.hero.title')}</h1>
           <p className="text-blue-200 text-lg leading-relaxed">
-            Gestión Académica Integral
+            {t('login.hero.subtitle')}
           </p>
           <p className="text-blue-300/70 text-sm mt-4">
-            Administra estudiantes, docentes, grados y certificados desde una sola plataforma.
+            {t('login.hero.description')}
           </p>
         </div>
       </div>
@@ -88,14 +99,14 @@ export default function LoginView() {
               <rect x="15" y="21" width="6" height="5" rx="0.8" fill="#ffd23f" />
               <circle cx="18" cy="16" r="2.5" fill="#fff" />
             </svg>
-            <h1 className="text-2xl font-display font-bold text-ink">EduGestión</h1>
-            <p className="text-gray-500 text-sm">Gestión Académica Integral</p>
+            <h1 className="text-2xl font-display font-bold text-ink">{t('login.hero.title')}</h1>
+            <p className="text-gray-500 text-sm">{t('login.hero.subtitle')}</p>
           </div>
 
           <div className="bg-white rounded-2xl shadow-card p-8 border border-gray-200/60">
             <div className="mb-6">
-              <h2 className="text-xl font-bold text-ink">Iniciar Sesión</h2>
-              <p className="text-gray-500 text-sm mt-1">Ingresa tus credenciales para continuar</p>
+              <h2 className="text-xl font-bold text-ink">{t('login.title')}</h2>
+              <p className="text-gray-500 text-sm mt-1">{t('login.subtitle')}</p>
             </div>
 
             {error && (
@@ -108,7 +119,7 @@ export default function LoginView() {
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Correo Electrónico
+                  {t('login.email')}
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-gray-400 pointer-events-none" />
@@ -120,14 +131,14 @@ export default function LoginView() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                    placeholder="usuario@edugestion.edu"
+                    placeholder={t('login.emailPlaceholder')}
                   />
                 </div>
               </div>
 
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Contraseña
+                  {t('login.password')}
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-gray-400 pointer-events-none" />
@@ -139,7 +150,7 @@ export default function LoginView() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full pl-10 pr-11 py-2.5 border border-gray-300 rounded-xl text-sm bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                    placeholder="Tu contraseña"
+                    placeholder={t('login.passwordPlaceholder')}
                   />
                   <button
                     type="button"
@@ -160,10 +171,10 @@ export default function LoginView() {
                 {isLoading ? (
                   <>
                     <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin mr-2" />
-                    Iniciando sesión…
+                    {t('login.loading')}
                   </>
                 ) : (
-                  'Iniciar Sesión'
+                  t('login.submit')
                 )}
               </button>
             </form>

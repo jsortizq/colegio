@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { StoreProvider, useStore } from './store/useStore';
+import { I18nProvider, useI18n } from './i18n';
 import Sidebar from './components/Sidebar';
 import Topbar from './components/Topbar';
 import Dashboard from './components/Dashboard';
@@ -15,6 +16,7 @@ import { RotateCcw } from 'lucide-react';
 
 function AppContent() {
   const { isAuthenticated, resetData } = useStore();
+  const { t } = useI18n();
   const [activeView, setActiveView] = useState('dashboard');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -58,13 +60,13 @@ function AppContent() {
       {/* Demo banner */}
       {isDemo && (
         <div className="fixed top-0 left-0 right-0 z-50 bg-sun-400 text-ink-DEFAULT text-center text-sm font-semibold py-1.5 px-4 flex items-center justify-center gap-3">
-          <span>🚀 Demo Beta — Los datos se guardan localmente</span>
+          <span>{t('app.demoBanner')}</span>
           <button
             onClick={resetData}
             className="inline-flex items-center gap-1 bg-ink-DEFAULT/10 hover:bg-ink-DEFAULT/20 text-ink-DEFAULT text-xs font-bold px-2.5 py-0.5 rounded-full transition-colors"
           >
             <RotateCcw className="w-3 h-3" />
-            Reiniciar datos
+            {t('app.resetData')}
           </button>
         </div>
       )}
@@ -110,8 +112,10 @@ function AppContent() {
 
 export default function App() {
   return (
-    <StoreProvider>
-      <AppContent />
-    </StoreProvider>
+    <I18nProvider>
+      <StoreProvider>
+        <AppContent />
+      </StoreProvider>
+    </I18nProvider>
   );
 }
