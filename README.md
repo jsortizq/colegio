@@ -1,6 +1,5 @@
 # EduGestión — Plataforma de Gestión Escolar
 
-[![CI](https://github.com/jsortizq/colegio-semillitas/actions/workflows/ci.yml/badge.svg)](https://github.com/jsortizq/colegio-semillitas/actions)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-blue)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18.3-61dafb)](https://react.dev/)
 [![Tailwind](https://img.shields.io/badge/Tailwind_CSS-3.4-38bdf8)](https://tailwindcss.com/)
